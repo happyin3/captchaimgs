@@ -1,0 +1,31 @@
+#__author__ = "happyin3"#
+
+###############
+#    folder   #
+###############
+static/images/convertimg/*
+static/images/dealimg/*
+static/images/extractimg/*
+static/images/mergeimg/*
+
+static/images/downcode/*
+static/images/dealcode/*
+static/images/splitcode/*
+static/images/onlinecode/*
+
+windows/*.txt
+windows/*.net
+###############
+#  fixed file #
+###############
+*.pyc
+*.zip
+
+###############
+#  temp file  #
+###############
+*.log
+*.ini
+*.tmp
+
+
