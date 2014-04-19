@@ -45,7 +45,111 @@ class ThesisHandler(object):
             down_url = config_results["downurl"]
             server_address = config_results["serverurl"]
             convert_url = config_results["converturl"]
-            convert_client = ConvertClinet() 
+            convert_client = ConvertClinet(down_url, server_address, convert_url)
             for urls in results:
                 url = urls["indexflag"]
                 #下载
+                list_save_name = convert_clinet.connect_server(url)
+                #PDF下载失败
+                if len(list_save_name):
+                    #存入数据集convertimg，存入url、图片路径、时间
+                    #设置url下载标记为1，已下载，图片处理标记为0，未提取图片
+                    exist = self.db.convertimg.find_one({"indexflag": url})
+                    if not exist:
+                        try:
+                            self.db.convertimg.insert({"indexflag": pdf_url, "convertpath": list_save_name, "time": time.ctime()})
+                            self.db.urlno.update({"indexflag": pdf_url}, {"$set": {"convertflag": 1, "downflag": 1}})
+                        except:
+                            pass
+                    else:
+                        #更新数据集urlno
+                        self.db.urlno.update({"indexflag": pdf_url}, {"$set": {"downflag": 2}})
+                
+                break
+        return
+
+    #提取图片
+    def extract_image(self):
+        #读取数据集urlno中图片提取标志为0的url，并返回url
+        list_url = self.db.urlno.find({"convertflag": 1, "extractflag": 0}, {"indexflag": 1})
+
+        i = 0
+        for urls in list_url:
+            url = urls["indexflag"]
+            #读取数据集convertimg中url想对应的转换图片
+            list_convert_img = self.db.convertimg.find({"indexflag": url}, {"convertpath": 1})
+
+            for item in list_convert_img:
+                list_convert_imgs = item["convertpath"]
+
+            #提取图片
+            list_save_path = []
+            for convert_img in list_convert_imgs:
+                image = Image.open(convert_img)
+                image = image.convert("L")
+                extract_img = ExtractImage(image)
+                list_each_save_path = extract_img.main()
+                list_save_path.append(list_each_save_path)
+
+            #分别提取不同路径
+            list_deal_image_path = []
+            list_extract_image_path = []
+            list_merge_image_path = []
+            for each_save_path in list_save_path:
+                list_deal_image_path.append(each_save_path[0][0])
+                if len(each_save_path[0][1]):
+                    list_merge_image_path.append(each_save_path[0][1])
+                if len(each_save_path[0][2]):
+                    for each_extract_image_path in each_save_path[0][2]:
+                        list_extract_image_path.append(each_extract_image_path)
+
+            #合并单页图片
+            final_merge_image_path = ""
+            if len(list_merge_image_path):
+                list_merge_image = []
+                for each_merge_image_path in list_merge_image_path:
+                    image = Image.open(each_merge_image_path)
+                    list_merge_image.append(image)
+                
+                extract_img = ExtractImage()
+                final_merge_image_path = extract_img.image_merge(list_merge_image)
+
+            #写入数据集dealimg,extractimg,mergeimg
+            exist = self.db.dealimg.find_one({"indexflag": url})
+            if not exist:
+                try:
+                    self.db.dealimg.insert({"indexflag": url, "dealpath": list_deal_image_path, "time": time.ctime()})
+                except:
+                    pass
+
+            exist = self.db.extractimg.find_one({"indexflag": url})
+            if not exist:
+                try:
+                    self.db.extractimg.insert({"indexflag": url, "extractpath": list_extract_image_path, "time": time.ctime()})
+                except:
+                    pass
+
+            exist = self.db.mergeimg.find_one({"indexflag": url})
+            if not exist:
+                try:
+                    self.db.mergeimg.insert({"indexflag": url, "mergepath": final_merge_image_path, "time": time.ctime()})
+                except:
+                    pass
+            try:
+                self.db.urlno.update({"indexflag": url}, {"$set": {"extractflag": 1}})
+            except:
+                pass
+
+            i = i + 1
+            print i
+            if i > 9:
+                break
+        return
+ 
+    def main(self):
+        print "GetRemote"
+        self.get_remote()
+        print "Convert"
+        self.convert()
+        print "ExtractImage"
+        self.extract_image()

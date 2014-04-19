@@ -48,9 +48,6 @@ class ConvertClient(object):
             
                     #下载图片
                     server_head = self.convert_server
-                    #判断路径是否存在
-                    
-                    save_head = "../staitc/images/convertimg/"
                     for i in xrange(len(list_img)-1):
                         each_img = list_img[i]
                         img_path = server_head + each_img
@@ -66,7 +63,6 @@ class ConvertClient(object):
 
     #下载图片
     def download_img(self, img_path):
-        
         save_name = "static/images/convertimg/" + time.ctime() + ".jpg"
         save_name_temp = "../%s" % save_name
         urllib.urlretrieve(img_path, save_name_temp)
