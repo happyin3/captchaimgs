@@ -50,7 +50,7 @@ class ThesisHandler(object):
             for urls in results:
                 url = urls["indexflag"]
                 #下载
-                list_save_name = convert_clinet.connect_server(url)
+                list_save_name = convert_client.connect_server(url)
                 #PDF下载失败
                 if len(list_save_name):
                     #存入数据集convertimg，存入url、图片路径、时间
@@ -62,9 +62,9 @@ class ThesisHandler(object):
                             self.db.urlno.update({"indexflag": url}, {"$set": {"convertflag": 1, "downflag": 1}})
                         except:
                             pass
-                    else:
-                        #更新数据集urlno
-                        self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
+                else:
+                    #更新数据集urlno
+                    self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
                 
                 break
         return
