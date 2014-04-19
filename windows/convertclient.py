@@ -45,7 +45,7 @@ class ConvertClient(object):
                     list_img = buf.split("?")
             
                     #下载图片
-                    server_head = self.convert_server
+                    server_head = self.convert_url
                     for i in xrange(len(list_img)-1):
                         each_img = list_img[i]
                         img_path = server_head + each_img
