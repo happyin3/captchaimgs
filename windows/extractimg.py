@@ -93,7 +93,7 @@ class ExtractImage(object):
             #截取图片
             extract_img = self.image.crop((cow_left, row_up, cow_right, row_down))
             save_path = "static/images/extractimg/" + time.ctime() + ".jpg"
-            sace_path_temp = "../%s" % save_path
+            save_path_temp = "../%s" % save_path
             extract_img.save(save_path_temp)
             time.sleep(1)
             list_extract_image.append([extract_img, save_path])

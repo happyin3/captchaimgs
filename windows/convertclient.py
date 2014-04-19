@@ -13,7 +13,7 @@ from splinter import Browser
 class ConvertClient(object):
     def __init__(self, down_url, server_address, convert_url):
         self.down_url = down_url
-        self.server_address = (server_address[0], int(server_address[1]))
+        self.server_address = (server_address[0], server_address[1])
         self.convert_url = convert_url
 
     #连接服务器，转换格式
@@ -45,7 +45,7 @@ class ConvertClient(object):
                     list_img = buf.split("?")
             
                     #下载图片
-                    server_head = self.convert_server
+                    server_head = self.convert_url
                     for i in xrange(len(list_img)-1):
                         each_img = list_img[i]
                         img_path = server_head + each_img
@@ -80,12 +80,13 @@ class SplinterThesis(object):
         return self.browser
     
     #查找下载地址
-    def get_down_url(self, down_url, browser):
+    def get_down_url(self, down_head, browser):
         result = browser.find_link_by_text("下载全文")
         down_url = ""
         if result:
             result = str(result["onclick"]).split("'")
-            temp_url = down_url + result[1]
+            temp_url = down_head + result[1]
+            print temp_url
             browser.visit(temp_url)
             result = browser.find_link_by_text("下载地址")
         

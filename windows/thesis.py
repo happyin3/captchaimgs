@@ -2,9 +2,11 @@ __author__ = "happyin3"
 #coding: utf-8
 
 import time
+from PIL import Image
 
 from puloperation import GetRemote
 from convertclient import ConvertClient
+from extractimg import ExtractImage 
 
 
 class ThesisHandler(object):
@@ -47,10 +49,11 @@ class ThesisHandler(object):
             server_address = config_results["serverurl"]
             convert_url = config_results["converturl"]
             convert_client = ConvertClient(down_url, server_address, convert_url)
+            i = 0
             for urls in results:
                 url = urls["indexflag"]
                 #下载
-                list_save_name = convert_clinet.connect_server(url)
+                list_save_name = convert_client.connect_server(url)
                 #PDF下载失败
                 if len(list_save_name):
                     #存入数据集convertimg，存入url、图片路径、时间
@@ -62,11 +65,13 @@ class ThesisHandler(object):
                             self.db.urlno.update({"indexflag": url}, {"$set": {"convertflag": 1, "downflag": 1}})
                         except:
                             pass
-                    else:
-                        #更新数据集urlno
-                        self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
+                else:
+                    #更新数据集urlno
+                    self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
                 
-                break
+                i = i + 1
+                if i > 5:
+                    break
         return
 
     #提取图片
@@ -86,7 +91,7 @@ class ThesisHandler(object):
             #提取图片
             list_save_path = []
             for convert_img in list_convert_imgs:
-                image = Image.open(convert_img)
+                image = Image.open("../%s" % convert_img)
                 image = image.convert("L")
                 extract_img = ExtractImage(image)
                 list_each_save_path = extract_img.main()
@@ -149,8 +154,8 @@ class ThesisHandler(object):
  
     def main(self):
         print "GetRemote"
-        self.get_remote()
+        #self.get_remote()
         print "Convert"
         #self.convert()
         print "ExtractImage"
-        #self.extract_image()
+        self.extract_image()
