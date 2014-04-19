@@ -6,9 +6,7 @@ import socket
 import urllib
 import time
 import pymongo
-from splinter import Browser
-
-from 
+from splinter import Browser 
 
 
 #文件格式转换
