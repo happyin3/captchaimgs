@@ -50,6 +50,23 @@ class MakeDirs(object):
             print "Nice"
 
 
+#读取文件
+class PulOperation(object):
+    def __init__(self):
+        pass
+
+    def read_file(self, path):
+        text = []
+        pathtext = open("path", "r")
+        while True:
+            line = pathtext.readline()
+            line = line.strip("\n")
+            if not line:
+                break
+            else:
+                text.append(line)
+        pathtext.close()
+        return text
 if __name__ == "__main__":
     make_dirs = MakeDirs()
     make_dirs.main() 

@@ -5,7 +5,7 @@ import time
 from PIL import Image
 
 from puloperation import GetRemote
-from convertclient import ConvertClient
+from thesisclass import ConvertClient
 from extractimg import ExtractImage 
 
 

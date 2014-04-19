@@ -1,0 +1,54 @@
+__author__ = "happyin3"
+#coding: utf-8
+
+import time
+
+from puloperation import GetRemote
+
+
+#专利
+class PatentHandler(object):
+    def __init__(self, db):
+        self.db = db
+
+    #远程获取专利号
+    def get_remote(self):
+        #读取数据集configini，获取远程索引url
+        results = self.db.configini.find_one({"kind": "patent", "onflag": 1}, {"_id": 0, "remoteurl": 1})
+        #没有数据
+        if results:
+            remote_url = results["remoteurl"]
+            #统计数据集urlno的数据，计算start
+            count = self.db.urlno.find({"kind": "patent"})
+            get_remote = GetRemote(remote_url)
+            list_data = get_remote.get_data(count)
+            #正确获取数据
+            if len(list_data):
+                for data in list_data:
+                    #查重
+                    exist = self.db.urlno.find_one({"indexflag": data})
+                    if not exist:
+                        #插入数据
+                        try:
+                            self.db.urlno.insert({"indexflag": data, "kind": "patent", "downflag": 0, "extractflag": 0, "time": time.ctime()})
+                        except:
+                            pass
+        return
+
+    #下载专利图片
+    def download(self):
+        #读取数据集urlno，获取专利号
+        results = self.db.urlno.find({"kind": "patent", "downflag": 0}, {"_id": 0, "indexflag": 1})
+        if results:
+            #读取数据集configini，获取专利下载配置文件
+            config_results = self.db.configini.find_one({"kind": "patent", "onflag": 1}, {"_id": 0, "downurl": 1})
+            down_url = config_results["downurl"]
+            #下载
+
+    #提取图片
+    def extract_image(self):
+        #读取数据集urlno，获取专利号
+        results = self.db.urlno.find({"kind": "patent", "downflag": 1}, {"_id": 0, "indexflag": 1})
+        if results:
+            for 
+

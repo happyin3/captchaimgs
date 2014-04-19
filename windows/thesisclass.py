@@ -99,4 +99,5 @@ class SplinterThesis(object):
         browser = self.get_html(html_url)
         down_url = self.get_down_url(down_url, browser)
         return down_url
-        
+
+
