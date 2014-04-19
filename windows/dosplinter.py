@@ -3,7 +3,9 @@ __author__ = "happyin3"
 
 import time
 import urllib
+from PIL import Image
 from splinter import Browser
+
 from dealcode import DealImage 
 from neuralwork import NeuralWork
 
@@ -29,20 +31,23 @@ class DoSplinter(object):
         if browser:
             #一个最多循环20次
             for i in xrange(20):
+                print i
                 #查找验证码
                 if not browser.is_element_not_present_by_id("getcode", wait_time=5):
-                    browser_img = browser.find_by_id("getcode")
-                    code_img = ""
-                    if browser_img:
-                        code_img = browser_img["src"]
-
-                    #下载验证码
+                    #截图
+                    #browser.screenshot("screenshot.png")
+                    browser.driver.maximize_window()
+                    browser.driver.save_screenshot("screenshot.png")
+                    
+                    #截取验证码图片
+                    image = Image.open("screenshot.png")
+                    image_code = image.crop((3, 50, 55, 71))
                     save_path = ""
-                    if len(code_img):
+                    if True:
                         save_path = "static/images/onlinecode/" + time.ctime() + ".png"
                         save_path_temp = "../%s" % save_path
-                        urllib.urlretrieve(code_img, save_path_temp)
-           
+                        image_code.save(save_path_temp)
+                        
                         #分割图片 
                         list_split_image = self.deal_split(save_path_temp)
             
@@ -66,9 +71,11 @@ class DoSplinter(object):
                                     print browser.html
                             else:
                                 browser.back()
+                                browser.reload()
                         else:
                             #刷新，重新获取验证码
                             browser.reload()
+                    
         return
 
     def deal_split(self, save_path): 
