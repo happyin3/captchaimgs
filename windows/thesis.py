@@ -18,7 +18,7 @@ class ThesisHandler(object):
         if results:
             remote_url = results["remoteurl"] 
             #统计数据集urlno的数据，计算start
-            count = self.db.urlno.count({"kind": "thesis"})
+            count = self.db.urlno.find({"kind": "thesis"}).count()
             get_remote = GetRemote(remote_url)
             list_data = get_remote.get_data(count)
             #正确获取数据
