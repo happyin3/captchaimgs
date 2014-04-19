@@ -114,7 +114,7 @@ class ThesisHandler(object):
             if len(list_merge_image_path):
                 list_merge_image = []
                 for each_merge_image_path in list_merge_image_path:
-                    image = Image.open(each_merge_image_path)
+                    image = Image.open("../%s" % each_merge_image_path)
                     list_merge_image.append(image)
                 
                 extract_img = ExtractImage()
