@@ -45,7 +45,7 @@ class ThesisHandler(object):
             down_url = config_results["downurl"]
             server_address = config_results["serverurl"]
             convert_url = config_results["converturl"]
-            convert_client = ConvertClinet(down_url, server_address, convert_url)
+            convert_client = ConvertClient(down_url, server_address, convert_url)
             for urls in results:
                 url = urls["indexflag"]
                 #下载
