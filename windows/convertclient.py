@@ -86,7 +86,6 @@ class SplinterThesis(object):
         if result:
             result = str(result["onclick"]).split("'")
             temp_url = down_head + result[1]
-            print temp_url
             browser.visit(temp_url)
             result = browser.find_link_by_text("下载地址")
         
