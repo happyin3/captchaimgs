@@ -13,7 +13,10 @@ class CodeClass(object):
         self.db = db
 
     #下载验证码，构建训练集
-    def download(self, down_url, number):
+    def download(self, number):
+        #读取数据集configini
+        results = self.db.configini.find({"kind": "code", "onflag": 1}, {"_id": 0, "downurl"})
+        down_url = results["downurl"]
         list_save_path = []
         for i in xrange(number):
             save_path = "static/images/downcode/" + time.ctime() + ".png"
@@ -166,7 +169,18 @@ class CodeClass(object):
 
         return
 
-
+    def main(self):
+        print "download"
+        self.download(50)
+        print "updateplain"
+        self.update_plain("plaintxt.txt")
+        print "dealcode"
+        self.deal_code()
+        print "splitcode"
+        self.split_code()
+        print "trainnet"
+        self.train_net()
+ 
 #验证码处理
 class CodeHandler(object):
     def __init__(self):

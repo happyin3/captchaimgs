@@ -17,7 +17,18 @@ def config_thesis(db):
     
     return 
 
+def config_code(db):
+    kind = "code"
+    down_url = "http://www.drugfuture.com/cnpat/verify.aspx"
+    
+    #配置
+    db.configini.insert({"kind": kind, "downurl": down_url, "onflag": 1, "time": time.ctime()})
+
+    return 
+
+
 if __name__ == "__main__": 
     conn = pymongo.Connection("127.0.0.1", 27017) 
     db = conn["captchaimg"]
-    config_thesis(db)
+    #config_thesis(db)
+    config_code(db)
