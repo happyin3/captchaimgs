@@ -150,6 +150,6 @@ class ThesisHandler(object):
         print "GetRemote"
         self.get_remote()
         print "Convert"
-        self.convert()
+        #self.convert()
         print "ExtractImage"
-        self.extract_image()
+        #self.extract_image()
