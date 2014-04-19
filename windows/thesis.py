@@ -4,6 +4,7 @@ __author__ = "happyin3"
 import time
 
 from puloperation import GetRemote
+from convertclient import ConvertClient
 
 
 class ThesisHandler(object):
@@ -29,7 +30,7 @@ class ThesisHandler(object):
                     if not exist:
                         #插入数据
                         try:
-                            self.db.urlno.insert({"indexflag": url, "kind": "thesis", "convertflag": 0, "extractflag": 0, "downflag": 0, "time": time.ctime()})
+                            self.db.urlno.insert({"indexflag": data, "kind": "thesis", "convertflag": 0, "extractflag": 0, "downflag": 0, "time": time.ctime()})
                         except:
                             pass
         return
@@ -57,13 +58,13 @@ class ThesisHandler(object):
                     exist = self.db.convertimg.find_one({"indexflag": url})
                     if not exist:
                         try:
-                            self.db.convertimg.insert({"indexflag": pdf_url, "convertpath": list_save_name, "time": time.ctime()})
-                            self.db.urlno.update({"indexflag": pdf_url}, {"$set": {"convertflag": 1, "downflag": 1}})
+                            self.db.convertimg.insert({"indexflag": url, "convertpath": list_save_name, "time": time.ctime()})
+                            self.db.urlno.update({"indexflag": url}, {"$set": {"convertflag": 1, "downflag": 1}})
                         except:
                             pass
                     else:
                         #更新数据集urlno
-                        self.db.urlno.update({"indexflag": pdf_url}, {"$set": {"downflag": 2}})
+                        self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
                 
                 break
         return
