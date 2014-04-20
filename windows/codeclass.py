@@ -15,8 +15,9 @@ class CodeClass(object):
     #下载验证码，构建训练集
     def download(self, number):
         #读取数据集configini
-        results = self.db.configini.find({"kind": "code", "onflag": 1}, {"_id": 0, "downurl"})
+        results = self.db.configini.find_one({"kind": "code", "onflag": 1}, {"_id": 0, "downurl": 1})
         down_url = results["downurl"]
+        print down_url
         list_save_path = []
         for i in xrange(number):
             save_path = "static/images/downcode/" + time.ctime() + ".png"
@@ -31,6 +32,7 @@ class CodeClass(object):
         
         #存入数据集downcode
         for save_path in list_save_path:
+            print save_path
             try:
                 self.db.downcode.insert({"codepath": save_path, "dealflag": 0, "splitflag": 0, "time": time.ctime()})
             except: pass
@@ -55,7 +57,7 @@ class CodeClass(object):
         #读取数据聚downcode，获取所有验证码路径
         results = self.db.downcode.find({}, {"_id": 0, "codepath": 1})
         if results:
-            for code_path, each_text in zip(results, all_plain_text)
+            for code_path, each_text in zip(results, all_plain_text):
                 code_path_temp = code_path["codepath"]
                 #更新数据集downcode，更新验证码明文
                 try:
@@ -173,20 +175,20 @@ class CodeClass(object):
         print "download"
         self.download(50)
         print "updateplain"
-        self.update_plain("plaintxt.txt")
+        #self.update_plain("plaintxt.txt")
         print "dealcode"
-        self.deal_code()
+        #self.deal_code()
         print "splitcode"
-        self.split_code()
+        #self.split_code()
         print "trainnet"
-        self.train_net()
+        #self.train_net()
  
 #验证码处理
 class CodeHandler(object):
     def __init__(self):
         pass
 
-    def binary_image(self, image:
+    def binary_image(self, image):
         ori_image = image
         temp_image = ori_image
 
