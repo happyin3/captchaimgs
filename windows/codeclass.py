@@ -76,7 +76,7 @@ class CodeClass(object):
                 code_path_temp = code_path["codepath"]
                 #预处理图片
                 code_path_temps = "../%s" % code_path_temp
-                image = Image.open(code_path_temp)
+                image = Image.open(code_path_temps)
                 save_path = code_handler.main_deal_image(image)
                 if len(save_path):
                     #存入数据库dealcode，验证码路径和验证码处理后路径
@@ -108,7 +108,8 @@ class CodeClass(object):
             
             for each_deal_path, each_code_path in zip(all_deal_path, all_code_paths):
                 each_deal_path_temp = "../%s" % each_deal_path
-                list_split_image_path = deal_image.main_split_image(each_deal_path_temp)
+                image = Image.open(each_deal_path_temp) 
+                list_split_image_path = code_handler.main_split_image(image)
                 if len(list_split_image_path):
                     #存入数据集splitcode，验证码路径和分割图片路径
                     exist_result = self.db.splitcode.find_one({"codepath": each_code_path})
@@ -173,15 +174,15 @@ class CodeClass(object):
 
     def main(self):
         print "download"
-        self.download(50)
+        #self.download(50)
         print "updateplain"
-        #self.update_plain("plaintxt.txt")
+        #self.update_plain("plaincode.txt")
         print "dealcode"
         #self.deal_code()
         print "splitcode"
         #self.split_code()
         print "trainnet"
-        #self.train_net()
+        self.train_net()
  
 #验证码处理
 class CodeHandler(object):
@@ -196,7 +197,7 @@ class CodeHandler(object):
 
         #转成黑色
         img_height = temp_image.size[1]
-        img_width = temp_image.size[2]
+        img_width = temp_image.size[0]
         for x in xrange(0, img_height):
             for y in xrange(0, img_width):
                 if temp_image.getpixel((y, x)) != 255:

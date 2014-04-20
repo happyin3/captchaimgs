@@ -57,7 +57,7 @@ class PulOperation(object):
 
     def read_file(self, path):
         text = []
-        pathtext = open("path", "r")
+        pathtext = open(path, "r")
         while True:
             line = pathtext.readline()
             line = line.strip("\n")
