@@ -23,7 +23,7 @@ class ThesisHandler(object):
             #统计数据集urlno的数据，计算start
             count = self.db.urlno.find({"kind": "thesis"}).count()
             get_remote = GetRemote(remote_url)
-            list_data = get_remote.get_data(count)
+            list_data = get_remote.get_data("thesis", count)
             #正确获取数据
             if len(list_data):
                 for data in list_data:

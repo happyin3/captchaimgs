@@ -4,6 +4,7 @@ __author__ = "happyin3"
 import time
 
 from puloperation import GetRemote
+from patentclass import DownPatent
 
 
 #专利
@@ -21,7 +22,7 @@ class PatentHandler(object):
             #统计数据集urlno的数据，计算start
             count = self.db.urlno.find({"kind": "patent"})
             get_remote = GetRemote(remote_url)
-            list_data = get_remote.get_data(count)
+            list_data = get_remote.get_data("patent", count)
             #正确获取数据
             if len(list_data):
                 for data in list_data:
@@ -31,8 +32,7 @@ class PatentHandler(object):
                         #插入数据
                         try:
                             self.db.urlno.insert({"indexflag": data, "kind": "patent", "downflag": 0, "extractflag": 0, "time": time.ctime()})
-                        except:
-                            pass
+                        except: pass
         return
 
     #下载专利图片
@@ -43,12 +43,28 @@ class PatentHandler(object):
             #读取数据集configini，获取专利下载配置文件
             config_results = self.db.configini.find_one({"kind": "patent", "onflag": 1}, {"_id": 0, "downurl": 1})
             down_url = config_results["downurl"]
+            down_patent = DownPatent(self.db, down_url)
             #下载
+            for result in results:
+                patentno = result["indexflag"]
+                try:
+                    download_link = down_patent.download(patentno)
+                    if len(download_link):
+                        #下载专利
+                        print download_link
+                except: pass
+        return
 
     #提取图片
     def extract_image(self):
         #读取数据集urlno，获取专利号
         results = self.db.urlno.find({"kind": "patent", "downflag": 1}, {"_id": 0, "indexflag": 1})
         if results:
-            for 
+            pass
+
+    def main(self):
+        print "getremote"
+        self.get_remote()
+        print "download"
+        self.download() 
 

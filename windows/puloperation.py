@@ -9,13 +9,18 @@ class GetRemote(object):
     def __init__(self, remote_url):
         self.solr = pysolr.Solr(remote_url, timeout=10)
 
-    def get_data(self, start, rows=100):
+    def get_data(self, kind, start, rows=100):
         #连接超时
         list_data = []
         try:
             results = self.solr.search("*:*", start=start, rows=rows, sort="update_time asc")
-            for result in results:
-                list_data.append(result["path"])
+            
+            if cmp(kind, "thesis") == 0:
+                for result in results:
+                    list_data.append(result["path"])
+            else:
+                for result in results:
+                    list_data.append(result["id"])
         except:
             pass
         finally:
