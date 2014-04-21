@@ -15,8 +15,8 @@ class DownPatent(object):
     def __init__(self, db, down_url):
         self.db = db
         self.down_url = down_url
-        self.browser = Browser("phantomjs", wait_time=20)
-        #self.browser = Browser()
+        #self.browser = Browser("phantomjs", wait_time=20)
+        self.browser = Browser()
 
     #下载专利
     def download(self, patentno):
