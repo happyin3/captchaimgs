@@ -32,7 +32,7 @@ def config_patent(db):
     down_url = "http://www.drugfuture.com/cnpat/cn_patent.asp"
 
     #配置
-    db.configini.insert({"kind": kind, "down_url": down_url, "onflag": 1, "time": time.ctime()})
+    db.configini.insert({"kind": kind, "remoteurl": remote_url, "downurl": down_url, "onflag": 1, "time": time.ctime()})
 
     return
 

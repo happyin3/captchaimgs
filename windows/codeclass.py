@@ -391,7 +391,7 @@ class CodeHandler(object):
 #神经网络
 class NeuralWork(object):
     def __init__(self):
-        self.goal = 0.001
+        self.goal = 0.01
 
     def train_net(self, input_data, output_data, net_size):
         inp = np.array(input_data)

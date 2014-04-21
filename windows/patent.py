@@ -19,8 +19,9 @@ class PatentHandler(object):
         #没有数据
         if results:
             remote_url = results["remoteurl"]
+            print remote_url
             #统计数据集urlno的数据，计算start
-            count = self.db.urlno.find({"kind": "patent"})
+            count = self.db.urlno.find({"kind": "patent"}).count()
             get_remote = GetRemote(remote_url)
             list_data = get_remote.get_data("patent", count)
             #正确获取数据
@@ -45,14 +46,19 @@ class PatentHandler(object):
             down_url = config_results["downurl"]
             down_patent = DownPatent(self.db, down_url)
             #下载
+            i = 0
             for result in results:
                 patentno = result["indexflag"]
+                print patentno
                 try:
                     download_link = down_patent.download(patentno)
                     if len(download_link):
                         #下载专利
                         print download_link
                 except: pass
+                i = i + 1
+                if i > 5:
+                    break
         return
 
     #提取图片
@@ -64,7 +70,7 @@ class PatentHandler(object):
 
     def main(self):
         print "getremote"
-        self.get_remote()
+        #self.get_remote()
         print "download"
         self.download() 
 
