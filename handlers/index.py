@@ -24,10 +24,32 @@ class PatentHandler(tornado.web.RequestHandler):
         if not patentno:
             self.write("1")  #input error
         else:
-            if cmp(patentno, "2") == 0:
-                self.write("2")  #no image
+            #数据集中时候存在所需专利号
+            exist_result = self.application.db.urlno.find_one({"indexflag": patentno})
+            if not exist_result:
+                #不存在url
+                self.write("2") 
             else:
-                self.write("/static/img/test.gif")
+                #是否已下载
+                exist_result = self.application.db.urlno.find_one({"indexflag": patentno, "downflag": 1})
+                if exist_result:
+                    #没有下载成功
+                    self.write("3")
+                else:
+                    #是否已提取图片
+                    exist_result = self.application.db.urlno.find_one({"indexflag": patentno, "extractflag": 1})
+                    if not exist_result:
+                        #没有提取图片 
+                        self.write("4")
+                    else:
+                        #是否存在图片
+                        exist_result = self.application.db.find_one({"indexflag": patentno}, {"_id": 0, "mergepath": 1})
+                        if not len(exist_result["mergepath"]):
+                            #不存在图片
+                            self.write("5")
+                        else:
+                            complete_merge_path = "http://signals.hyit.edu.cn:8888/" + exist_result["mergepath"]
+                            self.write(complete_merge_path)
         return 
 
 class ThesisHandler(tornado.web.RequestHandler):
@@ -61,11 +83,12 @@ class ThesisHandler(tornado.web.RequestHandler):
                             self.write("5")
                         else:
                             #是否存在图片
-                            extract_result = self.application.db.mergeimg.find({"indexflag": url})
-                            merge_path = extract_result[0]["mergepath"]
+                            extract_result = self.application.db.mergeimg.find_one({"indexflag": url}, {"_id": 0, "mergepath": 1})
+                            merge_path = extract_result["mergepath"]
                             if not len(merge_path):
                                 #不存在图片
                                 self.write("6")
                             else:
                                 complete_merge_path = "http://signals.hyit.edu.cn:8888/" + merge_path
                                 self.write(complete_merge_path)
+        return
