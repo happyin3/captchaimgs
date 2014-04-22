@@ -72,7 +72,6 @@ class DownPatent(object):
                                 list_split_flag.append(1)
                                 reg_plain_text = self.reg_code(list_split_image)
                                 fill_text = "".join(reg_plain_text)
-                                print fill_text         
                                 list_fill_text.append(fill_text)
                                 #填写验证码
                                 #hand_fill_text = raw_input("Enter fill text:")
@@ -82,7 +81,6 @@ class DownPatent(object):
                                 print self.browser.html.encode("utf-8").find("验证码输入错误") 
                                 if self.browser.html.encode("utf-8").find("验证码输入错误") == -1:
                                     list_reg_flag.append(1)
-                                    print self.browser.html
                                     if self.browser.html.encode("utf-8").find("没有找到该专利") == -1:
                                         down_link_one = self.browser.find_link_by_text("申请公开说明书图形下载(标准版)")
                                         down_link_two = self.browser.find_link_by_text("申请公开说明书图形下载(极速版)")
@@ -121,13 +119,15 @@ class DownPatent(object):
                                         down_flag = 1
                                         break
                                 else:
-                                    print "识别错误，重新加载1"
+                                    print "识别错误，重新加载"
                                     list_reg_flag.append(0)
                                     self.browser.back()
                                     self.browser.reload()
                             else:
                                 print "不能分割"
+                                list_fill_text.append("")
                                 list_split_flag.append(0)
+                                list_reg_flag.append(0)
                                 self.browser.reload()
                     
                     #存入数据集onlinecode，专利号，验证码路径，识别码，识别标志，不可分标志，时间
@@ -137,7 +137,6 @@ class DownPatent(object):
                             self.db.onlinecode.insert({"indexflag": patentno, "codepath": code_path, "filltext": fill_text, \
                                                       "splitflag": split_flag, "regflag": reg_flag, "time": time.ctime()})
                         except: pass
-        print down_flag
         return download_link
 
     #处理验证码                       
