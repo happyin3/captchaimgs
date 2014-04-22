@@ -32,7 +32,7 @@ class PatentHandler(tornado.web.RequestHandler):
             else:
                 #是否已下载
                 exist_result = self.application.db.urlno.find_one({"indexflag": patentno, "downflag": 1})
-                if exist_result:
+                if not exist_result:
                     #没有下载成功
                     self.write("3")
                 else:
@@ -43,7 +43,7 @@ class PatentHandler(tornado.web.RequestHandler):
                         self.write("4")
                     else:
                         #是否存在图片
-                        exist_result = self.application.db.find_one({"indexflag": patentno}, {"_id": 0, "mergepath": 1})
+                        exist_result = self.application.db.urlno.find_one({"indexflag": patentno}, {"_id": 0, "mergepath": 1})
                         if not len(exist_result["mergepath"]):
                             #不存在图片
                             self.write("5")
