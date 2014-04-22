@@ -207,7 +207,28 @@ class PatentClass(object):
         unzip_file.close()
 
     def extract_image(self, image):
-        extract = ExtractImage()
+        extract = ExtractImage(image)
         #横向提取
-                 
+        left_list_draw_line = extract.horizontal_draw_line(1, 2)
+        #合并
+        left_list_split_line = extract.horziontal_merger_line(left_list_draw_line)        
+        #纵向提取
+        left_list_extract_image = extract.vertical_line(1, 2, left_list_split_line)
+        #合并图片
+        list_extract_image = []
+        list_extract_image_path = []
+        for each_extract_image in left_list_extract_image:
+            list_extract_image.append(each_extract_image[0])
+            list_extract_image_path.append(each_extract_image[1])
 
+        merge_save_path = ""
+        if len(list_extract_image):
+            merge_save_path = extract.image_merge(list_extract_image)
+    
+        #保存中间处理图片
+        deal_save_path = "static/images/dealimg" + time.ctime() + ".jpg"
+        extract.image.save("../%s" % deal_save_path)
+
+        list_save_path = []
+        list_save_path.append([deal_save_path, merge_save_path, list_extract_image_path])
+        return list_save_path

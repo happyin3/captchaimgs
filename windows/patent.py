@@ -88,12 +88,19 @@ class PatentHandler(object):
                 if len(list_unzip_save_path):
                     #反向提取图片
                     list_len = len(list_unzip_save_path)
+                    count_none = 0
                     for i in xrange(list_len):
                         image_path = list_unzip_save_path[list_len-i-1]
                         image = Image.open("../%s" % image_path)
                         image = image.convert("L")
                         #提取图片
-             
+                        list_save_path = patent_handler.extract_image(image)
+                        if len(list_save_path):
+                            print list_save_path
+                        else:
+                            count_none += 1
+                        if count_none == 2:
+                            break
         return    
 
     def main(self):
