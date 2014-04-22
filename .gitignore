@@ -3,15 +3,7 @@
 ###############
 #    folder   #
 ###############
-static/images/convertimg/*
-static/images/dealimg/*
-static/images/extractimg/*
-static/images/mergeimg/*
-
-static/images/downcode/*
-static/images/dealcode/*
-static/images/splitcode/*
-static/images/onlinecode/*
+static/images/*
 
 windows/*.txt
 windows/*.net
