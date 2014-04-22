@@ -3,12 +3,14 @@ __author__ = "happyin3"
 
 import time
 import pymongo
+import zipfile
 from PIL import Image
 from splinter import Browser
+from zipfile import *
 
 from codeclass import CodeHandler
 from codeclass import NeuralWork
-
+from extractimg import ExtractImage
 
 #下载专利
 class DownPatent(object):
@@ -187,11 +189,47 @@ class DownPatent(object):
         return location
 
 
-if __name__ == "__main__":
-    conn = pymongo.Connection("127.0.0.1", 27017)
-    db = conn["captchaimg"] 
-    down_url = "http://www.drugfuture.com/cnpat/cn_patent.asp"
-    patentno = "CN201310723026"
-    down_patent = DownPatent(db, down_url)
-    download_link = down_patent.download(patentno)
-    print download_link
+class PatentClass(object):
+    def __init__(self):
+        pass
+
+    def unzip_patent(self, zip_path):
+        list_save_path = []
+        unzip_file = ZipFile("../%s" % zip_path)
+        list_unzip_file = unzip_file.namelist()
+        for name in list_unzip_file:
+            save_path = "static/images/unzippatent/" + time.ctime() + ".tif"
+            file_handler = open("../%s" % save_path, "wb")
+            file_handler.write(unzip_file.read(name))
+            file_handler.close()
+            list_save_path.append(save_path)
+            time.sleep(1)
+        unzip_file.close()
+        return list_save_path
+
+    def extract_image(self, image):
+        extract = ExtractImage(image)
+        #横向提取
+        left_list_draw_line = extract.horizontal_draw_line(1, 2)
+        #合并
+        left_list_split_line = extract.horizontal_merger_line(left_list_draw_line)        
+        #纵向提取
+        left_list_extract_image = extract.vertical_line(1, 2, left_list_split_line)
+        #合并图片
+        list_extract_image = []
+        list_extract_image_path = []
+        for each_extract_image in left_list_extract_image:
+            list_extract_image.append(each_extract_image[0])
+            list_extract_image_path.append(each_extract_image[1])
+
+        merge_save_path = ""
+        if len(list_extract_image):
+            merge_save_path = extract.image_merge(list_extract_image)
+    
+        #保存中间处理图片
+        deal_save_path = "static/images/dealimg/" + time.ctime() + ".jpg"
+        extract.image.save("../%s" % deal_save_path)
+
+        list_save_path = []
+        list_save_path.append([deal_save_path, merge_save_path, list_extract_image_path])
+        return list_save_path

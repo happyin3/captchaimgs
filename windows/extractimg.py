@@ -8,16 +8,20 @@ class ExtractImage(object):
     def __init__(self, image=None):
         self.image = image
 
-    def horizontal_draw_line(self, flag):
+    def horizontal_draw_line(self, flag, kind_flag):
         oriimage = self.image
         img_rows = oriimage.size[1]
         img_cows = oriimage.size[0]
-
-        if flag == 1:
-            start_line = 0
-            end_line = img_cows / 2
+        
+        if kind_flag == 1:
+            if flag == 1:
+                start_line = 0
+                end_line = img_cows / 2
+            else:
+                start_line = img_cows / 2
+                end_line = img_cows
         else:
-            start_line = img_cows / 2
+            start_line = 0
             end_line = img_cows
 
         list_draw_line = []
@@ -48,15 +52,19 @@ class ExtractImage(object):
                     list_split_line.append([temp_line, temp_line_down])
         return list_split_line
 
-    def vertical_line(self, flag, list_split_line):
+    def vertical_line(self, flag, kind_flag, list_split_line):
         oriimage = self.image
         img_cows = oriimage.size[0]
 
-        if flag == 1:
-            start_line = 0
-            end_line = img_cows / 2
+        if kind_flag == 1:
+            if flag == 1:
+                start_line = 0
+                end_line = img_cows / 2
+            else:
+                start_line = img_cows / 2
+                end_line = img_cows
         else:
-            start_line = img_cows / 2
+            start_line = 0
             end_line = img_cows
 
         list_draw_line = []
@@ -157,18 +165,18 @@ class ExtractImage(object):
 
     def main(self):
         #左边扫描
-        left_list_draw_line = self.horizontal_draw_line(1)
+        left_list_draw_line = self.horizontal_draw_line(1, 1)
         #左边合并
         left_list_split_line = self.horizontal_merger_line(left_list_draw_line)
         #右边扫描
-        right_list_draw_line = self.horizontal_draw_line(2)
+        right_list_draw_line = self.horizontal_draw_line(2, 1)
         #右边合并
         right_list_split_line = self.horizontal_merger_line(right_list_draw_line)
 
         #纵向扫描，左
-        left_list_extract_image = self.vertical_line(1, left_list_split_line)
+        left_list_extract_image = self.vertical_line(1, 1, left_list_split_line)
         #纵向扫描，右
-        right_list_extract_image = self.vertical_line(2, right_list_split_line)
+        right_list_extract_image = self.vertical_line(2, 1, right_list_split_line)
         
         #合并图片
         list_extract_image = []
@@ -194,3 +202,4 @@ class ExtractImage(object):
         list_save_path.append([deal_save_path, merge_save_path, list_extract_image_path])
 
         return list_save_path 
+

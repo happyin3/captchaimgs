@@ -2,9 +2,14 @@ __author__ = "happyin3"
 #coding: utf-8
 
 import time
+import urllib
+import PythonMagick
+from PIL import Image
 
 from puloperation import GetRemote
 from patentclass import DownPatent
+from patentclass import PatentClass
+from extractimg import ExtractImage
 
 
 #专利
@@ -55,6 +60,12 @@ class PatentHandler(object):
                     if len(download_link):
                         #下载专利
                         print download_link
+                        save_path = "static/images/zippatent/" + time.ctime() + ".zip"
+                        save_path_temp = "../%s" % save_path
+                        urllib.urlretrieve(download_link, save_path_temp) 
+                        #更新数据集urlno，添加downlink
+                        self.db.urlno.update({"indexflag": patentno}, {"$set": {"downflag": 1, "downlink": download_link, "zippath": save_path}})
+                        print "保存成功"
                 except: pass
                 i = i + 1
                 if i > 5:
@@ -64,13 +75,68 @@ class PatentHandler(object):
     #提取图片
     def extract_image(self):
         #读取数据集urlno，获取专利号
-        results = self.db.urlno.find({"kind": "patent", "downflag": 1}, {"_id": 0, "indexflag": 1})
+        results = self.db.urlno.find({"kind": "patent", "downflag": 1}, {"_id": 0, "indexflag": 1, "zippath": 1})
         if results:
-            pass
+            patent_handler = PatentClass()
+            list_patentno = []
+            list_zip_path = []
+            for result in results:
+                list_patentno.append(result["indexflag"])
+                list_zip_path.append(result["zippath"])
+
+            #解压文件
+            list_unzip_save_path = []
+            for patentno, zip_path in zip(list_patentno, list_zip_path):
+                list_unzip_save_path = patent_handler.unzip_patent(zip_path)
+                print "解压完成"
+                #判断是否解压成功
+                if len(list_unzip_save_path):
+                    #反向提取图片
+                    list_len = len(list_unzip_save_path)
+                    count_none = 0
+                    list_deal_save_path = []
+                    list_merge_save_path = []
+                    list_extract_save_path = []
+                    for i in xrange(list_len):
+                        image_path = list_unzip_save_path[list_len-i-1]
+                        #将tif暂时转成jpg
+                        PythonMagick.Image("../%s" % image_path).write("temptiftojpg.jpg")
+                        image = Image.open("temptiftojpg.jpg")
+                        image = image.convert("L")
+                        #提取图片
+                        list_save_path = patent_handler.extract_image(image)
+                        if len(list_save_path[0][1]):
+                            list_deal_save_path.append(list_save_path[0][0])
+                            list_merge_save_path.append(list_save_path[0][1])
+                            list_extract_save_path.append(list_save_path[0][2])
+                        else:
+                            count_none += 1
+                        if count_none == 2:
+                            break
+
+                    #将多张图片合成一张大图
+                    final_merge_save_path = ""
+                    if len(list_merge_save_path):
+                        list_merge_image = []
+                        for merge_image_path in list_merge_save_path:
+                            image = Image.open("../%s" % merge_image_path)
+                            list_merge_image.append(image)
+
+                        extract = ExtractImage()
+                        final_merge_save_path = extract.image_merge(list_merge_image)
+
+                    #存入数据集，更新数据集urlno
+                    try:
+                        self.db.urlno.update({"indexflag": patentno}, {"$set": {"extractflag": 1, "dealpath": list_deal_save_path, 
+                                             "extractpath": list_extract_save_path, "mergepath": final_merge_save_path}})
+                        print "提取成功"
+                    except: pass
+        return    
 
     def main(self):
         print "getremote"
         #self.get_remote()
         print "download"
-        self.download() 
-
+        #self.download() 
+        print "extractimage"
+        self.extract_image()
