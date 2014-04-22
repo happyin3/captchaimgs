@@ -75,7 +75,7 @@ class PatentHandler(object):
     #提取图片
     def extract_image(self):
         #读取数据集urlno，获取专利号
-        results = self.db.urlno.find({"kind": "patent", "downflag": 1}, {"_id": 0, "indexflag": 1, "zippath": 1})
+        results = self.db.urlno.find({"kind": "patent", "downflag": 1, "extractflag": 0}, {"_id": 0, "indexflag": 1, "zippath": 1})
         if results:
             patent_handler = PatentClass()
             list_patentno = []
