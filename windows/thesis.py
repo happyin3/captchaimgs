@@ -70,7 +70,8 @@ class ThesisHandler(object):
                     self.db.urlno.update({"indexflag": url}, {"$set": {"downflag": 2}})
                 
                 i = i + 1
-                if i > 5:
+                print i
+                if i > 20:
                     break
         return
 
@@ -148,7 +149,7 @@ class ThesisHandler(object):
 
             i = i + 1
             print i
-            if i > 9:
+            if i > 20:
                 break
         return
  

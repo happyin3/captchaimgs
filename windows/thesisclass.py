@@ -21,6 +21,7 @@ class ConvertClient(object):
         list_save_name = []
         #获取PDF下载地址
         splinter_thesis = SplinterThesis()
+        print "查找下载链接"
         down_url = splinter_thesis.main(self.down_url, pdf_url)
         #下载地址查找正确
         if len(down_url):
@@ -72,7 +73,7 @@ class ConvertClient(object):
 #获取下载地址        
 class SplinterThesis(object):
     def __init__(self):
-        self.browser = Browser("phantomjs")
+        self.browser = Browser("phantomjs", wait_time=10)
     
     #访问网页
     def get_html(self, url):

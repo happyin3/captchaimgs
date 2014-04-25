@@ -1,6 +1,12 @@
 /* __author__ = "happyin3" */
 
 $(document).ready(function(){
+    $(window).scroll(function(){
+        var top = $(this).scrollTop();
+        var flowSearch = $("#mainsearch");
+        flowSearch.css("top", top+10);
+    })
+
     $("#thesis").click(function(){
         var url = $("#thesislink").val()
         $.post("/getThesisImage",{"url": url},

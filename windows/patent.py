@@ -68,7 +68,8 @@ class PatentHandler(object):
                         print "保存成功"
                 except: pass
                 i = i + 1
-                if i > 5:
+                print i
+                if i > 20:
                     break
         return
 
@@ -137,6 +138,6 @@ class PatentHandler(object):
         print "getremote"
         #self.get_remote()
         print "download"
-        #self.download() 
+        self.download() 
         print "extractimage"
-        self.extract_image()
+        #self.extract_image()
