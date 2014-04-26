@@ -24,6 +24,6 @@ def main_patent(db):
 if __name__ == "__main__":
     conn = pymongo.Connection("127.0.0.1", 27017)
     db = conn["captchaimg"]    
-    #main_thesis(db) 
+    main_thesis(db) 
     #main_code(db)
-    main_patent(db)
+    #main_patent(db)

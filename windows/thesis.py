@@ -71,7 +71,7 @@ class ThesisHandler(object):
                 
                 i = i + 1
                 print i
-                if i > 20:
+                if i > 2:
                     break
         return
 
@@ -117,9 +117,11 @@ class ThesisHandler(object):
                 for each_merge_image_path in list_merge_image_path:
                     image = Image.open("../%s" % each_merge_image_path)
                     list_merge_image.append(image)
-                
+               
+                urls = url.split("/")
+                url_num = urls[len(urls)-1][:-5]
                 extract_img = ExtractImage()
-                final_merge_image_path = extract_img.image_merge(list_merge_image)
+                final_merge_image_path = extract_img.image_merge(list_merge_image, url_num)
 
             #写入数据集dealimg,extractimg,mergeimg
             exist = self.db.dealimg.find_one({"indexflag": url})
@@ -149,7 +151,7 @@ class ThesisHandler(object):
 
             i = i + 1
             print i
-            if i > 20:
+            if i > 2:
                 break
         return
  

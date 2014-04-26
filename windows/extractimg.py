@@ -118,7 +118,7 @@ class ExtractImage(object):
             pass
         return image
 
-    def image_merge(self, list_extract_image, restriction_max_width=None, restriction_max_height=None):
+    def image_merge(self, list_extract_image, url_num=None, restriction_max_width=None, restriction_max_height=None):
         max_width = 0
         total_height = 0
 
@@ -157,7 +157,11 @@ class ExtractImage(object):
             new_img = image_resize(new_img, size(max_width, total_height))
         
         #保存图片
-        save_path = "static/images/mergeimg/" + time.ctime() + ".jpg"
+        if not url_num:
+            save_path = "static/images/mergeimg/" + time.ctime() + ".jpg"
+        else:
+            save_path = "static/images/mergeimg/" + url_num + ".jpg"
+            
         save_path_temp = "../%s" % save_path
         new_img.save(save_path_temp)
         

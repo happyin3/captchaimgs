@@ -69,7 +69,7 @@ class PatentHandler(object):
                 except: pass
                 i = i + 1
                 print i
-                if i > 20:
+                if i > 2:
                     break
         return
 
@@ -122,9 +122,10 @@ class PatentHandler(object):
                         for merge_image_path in list_merge_save_path:
                             image = Image.open("../%s" % merge_image_path)
                             list_merge_image.append(image)
-
+                        
+                        patent_num = patentno 
                         extract = ExtractImage()
-                        final_merge_save_path = extract.image_merge(list_merge_image)
+                        final_merge_save_path = extract.image_merge(list_merge_image, patentno)
 
                     #存入数据集，更新数据集urlno
                     try:
